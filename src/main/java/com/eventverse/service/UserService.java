@@ -6,23 +6,27 @@ import com.eventverse.dto.user.RegisterRequest;
 import com.eventverse.dto.user.UserResponse;
 import com.eventverse.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     public UserResponse register(RegisterRequest request) {
 
         User user = new User();
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.CUSTOMER);
         user.setStatus("ACTIVE");
 
